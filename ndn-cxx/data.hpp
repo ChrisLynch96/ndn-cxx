@@ -218,6 +218,12 @@ public: // MetaInfo fields
   Data&
   setFreshnessPeriod(time::milliseconds freshnessPeriod);
 
+  const int
+  isPushed() const;
+
+  Data&
+  setPushed(const bool pushed);
+
   const optional<name::Component>&
   getFinalBlock() const
   {
@@ -262,6 +268,12 @@ inline bool
 operator!=(const Data& lhs, const Data& rhs)
 {
   return !(lhs == rhs);
+}
+
+inline const int
+Data::isPushed() const
+{
+  return m_metaInfo.isPushed();
 }
 
 } // namespace ndn

@@ -302,6 +302,15 @@ Data::setFreshnessPeriod(time::milliseconds freshnessPeriod)
 }
 
 Data&
+Data::setPushed(const bool pushed)
+{
+  resetWire();
+  m_metaInfo.setPushed(pushed);
+
+  return *this;
+}
+
+Data&
 Data::setFinalBlock(optional<name::Component> finalBlockId)
 {
   resetWire();

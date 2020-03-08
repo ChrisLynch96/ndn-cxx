@@ -115,6 +115,15 @@ public: // getter/setter
   MetaInfo&
   setFreshnessPeriod(time::milliseconds freshnessPeriod);
 
+  const int
+  isPushed() const;
+
+  /** @brief set data as pushed
+   *  Called for data packets not generated from requesting interest.
+   */
+  MetaInfo&
+  setPushed(bool pushed);
+
   /** @brief return FinalBlockId
    */
   const optional<name::Component>&
@@ -134,7 +143,7 @@ public: // app-defined MetaInfo items
    *
    * @note Warning: Experimental API, which may change or disappear in the future
    *
-   * @note If MetaInfo is decoded from wire and setType, setFreshnessPeriod, or setFinalBlock
+   * @note If MetaInfo is decoded from wire and setType, setIsPushed, setFreshnessPeriod, or setFinalBlock
    *       is called before *AppMetaInfo, all app-defined blocks will be lost
    */
   const std::list<Block>&
@@ -208,6 +217,7 @@ public: // EqualityComparable concept
 
 private:
   uint32_t m_type;
+  bool m_pushed;
   time::milliseconds m_freshnessPeriod;
   optional<name::Component> m_finalBlockId;
   std::list<Block> m_appMetaInfo;
@@ -224,6 +234,12 @@ inline bool
 MetaInfo::operator==(const MetaInfo& other) const
 {
   return wireEncode() == other.wireEncode();
+}
+
+inline const int
+MetaInfo::isPushed() const
+{
+  return m_pushed;
 }
 
 inline bool
