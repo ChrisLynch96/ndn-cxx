@@ -27,6 +27,7 @@
 #include "ndn-cxx/signature.hpp"
 #include "ndn-cxx/detail/packet-base.hpp"
 #include "ndn-cxx/encoding/block.hpp"
+#include "ns3/nstime.h"
 
 namespace ndn {
 
@@ -224,6 +225,12 @@ public: // MetaInfo fields
   Data&
   setPushed(const bool pushed);
 
+  const ns3::Time
+  getTimestamp() const;
+
+  Data&
+  setTimestamp(ns3::Time timestamp);
+
   const optional<name::Component>&
   getFinalBlock() const
   {
@@ -274,6 +281,12 @@ inline const int
 Data::isPushed() const
 {
   return m_metaInfo.isPushed();
+}
+
+inline const ns3::Time
+Data::getTimestamp() const
+{
+  return m_metaInfo.getTimestamp();
 }
 
 } // namespace ndn

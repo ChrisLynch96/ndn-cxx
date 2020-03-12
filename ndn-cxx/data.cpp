@@ -311,6 +311,15 @@ Data::setPushed(const bool pushed)
 }
 
 Data&
+Data::setTimestamp(ns3::Time timestamp)
+{
+  resetWire();
+  m_metaInfo.setTimestamp(timestamp);
+
+  return *this;
+}
+
+Data&
 Data::setFinalBlock(optional<name::Component> finalBlockId)
 {
   resetWire();

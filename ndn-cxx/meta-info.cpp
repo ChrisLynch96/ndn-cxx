@@ -72,6 +72,14 @@ MetaInfo::setPushed(bool pushed)
 }
 
 MetaInfo&
+MetaInfo::setTimestamp(ns3::Time timestamp)
+{
+  m_wire.reset();
+  m_timestamp = timestamp;
+  return *this;
+}
+
+MetaInfo&
 MetaInfo::setFinalBlock(optional<name::Component> finalBlockId)
 {
   m_wire.reset();
@@ -162,6 +170,11 @@ MetaInfo::wireEncode(EncodingImpl<TAG>& encoder) const
   if (isPushed()) {
     totalLength += prependEmptyBlock(encoder, tlv::PushedData);
   }
+
+  // creation timestamp
+  // if (m_timestamp) {
+  //   totalLength += prependEmptyBlock(encoder, tlv::TimestampNameComponent);
+  // }
 
   // ContentType
   if (m_type != tlv::ContentType_Blob) {

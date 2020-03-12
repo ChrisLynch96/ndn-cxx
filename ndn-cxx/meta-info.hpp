@@ -26,6 +26,7 @@
 #include "ndn-cxx/encoding/block.hpp"
 #include "ndn-cxx/encoding/encoding-buffer.hpp"
 #include "ndn-cxx/util/time.hpp"
+#include "ns3/nstime.h"
 
 #include <list>
 
@@ -124,6 +125,12 @@ public: // getter/setter
   MetaInfo&
   setPushed(bool pushed);
 
+  MetaInfo&
+  setTimestamp(ns3::Time timestamp);
+
+  const ns3::Time
+  getTimestamp() const;
+
   /** @brief return FinalBlockId
    */
   const optional<name::Component>&
@@ -218,6 +225,7 @@ public: // EqualityComparable concept
 private:
   uint32_t m_type;
   bool m_pushed;
+  ns3::Time m_timestamp;
   time::milliseconds m_freshnessPeriod;
   optional<name::Component> m_finalBlockId;
   std::list<Block> m_appMetaInfo;
@@ -240,6 +248,12 @@ inline const int
 MetaInfo::isPushed() const
 {
   return m_pushed;
+}
+
+inline const ns3::Time
+MetaInfo::getTimestamp() const
+{
+  return m_timestamp;
 }
 
 inline bool
