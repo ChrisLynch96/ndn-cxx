@@ -124,7 +124,6 @@ NotificationSubscriberBase::shouldStop()
 void
 NotificationSubscriberBase::afterReceiveData(const Data& data)
 {
-  std::cout << "NotificationSubscriberBase::afterReceiveData data=" << data.getName() << "\n";
   if (shouldStop())
     return;
 
@@ -142,8 +141,6 @@ NotificationSubscriberBase::afterReceiveData(const Data& data)
     sendInitialInterest();
     return;
   }
-
-  std::cout << "leaving NotificationSubscriberBase::afterReceiveData data=" << data.getName() << "\n";
 
   sendNextInterest();
 }

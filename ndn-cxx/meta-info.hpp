@@ -125,12 +125,6 @@ public: // getter/setter
   MetaInfo&
   setPushed(bool pushed);
 
-  MetaInfo&
-  setTimestamp(ns3::Time timestamp);
-
-  const ns3::Time
-  getTimestamp() const;
-
   /** @brief return FinalBlockId
    */
   const optional<name::Component>&
@@ -248,12 +242,6 @@ inline const int
 MetaInfo::isPushed() const
 {
   return m_pushed;
-}
-
-inline const ns3::Time
-MetaInfo::getTimestamp() const
-{
-  return m_timestamp;
 }
 
 inline bool
