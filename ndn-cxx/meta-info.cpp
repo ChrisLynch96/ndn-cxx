@@ -34,8 +34,8 @@ static_assert(std::is_base_of<tlv::Error, MetaInfo::Error>::value,
 
 MetaInfo::MetaInfo()
   : m_type(tlv::ContentType_Blob)
-  , m_pushed(false)
   , m_freshnessPeriod(DEFAULT_FRESHNESS_PERIOD)
+  , m_pushed(false)
 {
 }
 
@@ -137,6 +137,7 @@ MetaInfo::wireEncode(EncodingImpl<TAG>& encoder) const
 {
   // MetaInfo ::= META-INFO-TYPE TLV-LENGTH
   //                ContentType?
+  //                isPushed?
   //                FreshnessPeriod?
   //                FinalBlockId?
   //                AppMetaInfo*
@@ -159,7 +160,7 @@ MetaInfo::wireEncode(EncodingImpl<TAG>& encoder) const
   }
 
   // PushedData
-  if (isPushed()) {
+  if (m_pushed) {
     totalLength += prependEmptyBlock(encoder, tlv::PushedData);
   }
 
@@ -199,6 +200,7 @@ MetaInfo::wireDecode(const Block& wire)
 
   // MetaInfo ::= META-INFO-TYPE TLV-LENGTH
   //                ContentType?
+  //                IsPushed?
   //                FreshnessPeriod?
   //                FinalBlockId?
   //                AppMetaInfo*
@@ -215,9 +217,11 @@ MetaInfo::wireDecode(const Block& wire)
   }
 
   // PushedData
-  val = m_wire.find(tlv::PushedData);
-  if (val != m_wire.elements_end()) {
+  if (val != m_wire.elements_end() && val->type() == tlv::PushedData) {
     m_pushed = true;
+    ++val;
+  } else {
+    m_pushed = false;
   }
 
   // FreshnessPeriod
@@ -249,6 +253,9 @@ operator<<(std::ostream& os, const MetaInfo& info)
 {
   // ContentType
   os << "ContentType: " << info.getType();
+
+  //PushedData
+  os << ", PushedData: " << info.isPushed();
 
   // FreshnessPeriod
   if (info.getFreshnessPeriod() > 0_ms) {

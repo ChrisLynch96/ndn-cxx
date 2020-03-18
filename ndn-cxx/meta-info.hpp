@@ -47,6 +47,7 @@ const time::milliseconds DEFAULT_FRESHNESS_PERIOD = time::milliseconds::zero();
  *
  *     MetaInfo ::= META-INFO-TYPE TLV-LENGTH
  *                    ContentType?
+ *                    IsPushed?
  *                    FreshnessPeriod?
  *                    FinalBlockId?
  *                    AppMetaInfo*
@@ -116,8 +117,11 @@ public: // getter/setter
   MetaInfo&
   setFreshnessPeriod(time::milliseconds freshnessPeriod);
 
-  const int
-  isPushed() const;
+  bool
+  isPushed() const
+  {
+    return m_pushed;
+  }
 
   /** @brief set data as pushed
    *  Called for data packets not generated from requesting interest.
@@ -219,7 +223,6 @@ public: // EqualityComparable concept
 private:
   uint32_t m_type;
   bool m_pushed;
-  ns3::Time m_timestamp;
   time::milliseconds m_freshnessPeriod;
   optional<name::Component> m_finalBlockId;
   std::list<Block> m_appMetaInfo;
@@ -236,12 +239,6 @@ inline bool
 MetaInfo::operator==(const MetaInfo& other) const
 {
   return wireEncode() == other.wireEncode();
-}
-
-inline const int
-MetaInfo::isPushed() const
-{
-  return m_pushed;
 }
 
 inline bool

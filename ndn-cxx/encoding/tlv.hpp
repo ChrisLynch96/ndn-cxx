@@ -85,7 +85,7 @@ enum {
   LinkDelegation                  = 31,
   LinkPreference                  = 30,
 
-  PushedData = 38,
+  PushedData = 353542,
 
   NameComponentMin = 1,
   NameComponentMax = 65535,
