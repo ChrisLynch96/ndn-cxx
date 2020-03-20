@@ -117,18 +117,6 @@ public: // getter/setter
   MetaInfo&
   setFreshnessPeriod(time::milliseconds freshnessPeriod);
 
-  bool
-  isPushed() const
-  {
-    return m_pushed;
-  }
-
-  /** @brief set data as pushed
-   *  Called for data packets not generated from requesting interest.
-   */
-  MetaInfo&
-  setPushed(bool pushed);
-
   /** @brief return FinalBlockId
    */
   const optional<name::Component>&
@@ -222,7 +210,6 @@ public: // EqualityComparable concept
 
 private:
   uint32_t m_type;
-  bool m_pushed;
   time::milliseconds m_freshnessPeriod;
   optional<name::Component> m_finalBlockId;
   std::list<Block> m_appMetaInfo;

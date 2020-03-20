@@ -147,6 +147,24 @@ public: // Data fields
   Data&
   setMetaInfo(const MetaInfo& metaInfo);
 
+  /** @brief get whether this data packet has been designated as pushed
+   */
+  const bool
+  getPushed() const
+  {
+    if (m_pushed == "true") {
+      return true;
+    }
+
+    return false;
+  }
+
+  /** @brief Set Pushed
+   *  @return a reference to this Data, to allow chainging
+   */
+  Data&
+  setPushed(const bool pushed);
+
   /** @brief Get Content
    *
    *  The Content value is accessible through value()/value_size() or value_begin()/value_end()
@@ -219,15 +237,6 @@ public: // MetaInfo fields
   Data&
   setFreshnessPeriod(time::milliseconds freshnessPeriod);
 
-  int
-  isPushed() const
-  {
-    return m_metaInfo.isPushed();
-  }
-
-  Data&
-  setPushed(const bool pushed);
-
   const optional<name::Component>&
   getFinalBlock() const
   {
@@ -246,6 +255,7 @@ protected:
 
 private:
   Name m_name;
+  std::string m_pushed;
   MetaInfo m_metaInfo;
   Block m_content;
   Signature m_signature;

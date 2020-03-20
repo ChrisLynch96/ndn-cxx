@@ -35,6 +35,7 @@ static_assert(std::is_base_of<tlv::Error, Data::Error>::value,
 Data::Data(const Name& name)
   : m_name(name)
   , m_content(tlv::Content)
+  , m_pushed("false")
 {
 }
 
@@ -72,6 +73,9 @@ Data::wireEncode(EncodingImpl<TAG>& encoder, bool wantUnsignedPortionOnly) const
 
   // MetaInfo
   totalLength += getMetaInfo().wireEncode(encoder);
+
+  // Pushed
+  totalLength += prependStringBlock(encoder, tlv::PushedData, m_pushed);
 
   // Name
   totalLength += getName().wireEncode(encoder);
@@ -145,36 +149,44 @@ Data::wireDecode(const Block& wire)
 
   for (++element; element != m_wire.elements_end(); ++element) {
     switch (element->type()) {
-      case tlv::MetaInfo: {
-        if (lastElement >= 2) {
-          BOOST_THROW_EXCEPTION(Error("MetaInfo element is out of order"));
+      case tlv::PushedData: {
+        if (lastElement >= 2 ) {
+          BOOST_THROW_EXCEPTION(Error("PushedData element is out of order"));
         }
-        m_metaInfo.wireDecode(*element);
+        m_pushed = readString(*element);
         lastElement = 2;
         break;
       }
-      case tlv::Content: {
+      case tlv::MetaInfo: {
         if (lastElement >= 3) {
-          BOOST_THROW_EXCEPTION(Error("Content element is out of order"));
+          BOOST_THROW_EXCEPTION(Error("MetaInfo element is out of order"));
         }
-        m_content = *element;
+        m_metaInfo.wireDecode(*element);
         lastElement = 3;
         break;
       }
-      case tlv::SignatureInfo: {
+      case tlv::Content: {
         if (lastElement >= 4) {
-          BOOST_THROW_EXCEPTION(Error("SignatureInfo element is out of order"));
+          BOOST_THROW_EXCEPTION(Error("Content element is out of order"));
         }
-        m_signature.setInfo(*element);
+        m_content = *element;
         lastElement = 4;
         break;
       }
-      case tlv::SignatureValue: {
+      case tlv::SignatureInfo: {
         if (lastElement >= 5) {
+          BOOST_THROW_EXCEPTION(Error("SignatureInfo element is out of order"));
+        }
+        m_signature.setInfo(*element);
+        lastElement = 5;
+        break;
+      }
+      case tlv::SignatureValue: {
+        if (lastElement >= 6) {
           BOOST_THROW_EXCEPTION(Error("SignatureValue element is out of order"));
         }
         m_signature.setValue(*element);
-        lastElement = 5;
+        lastElement = 6;
         break;
       }
       default: {
@@ -226,6 +238,21 @@ Data::setMetaInfo(const MetaInfo& metaInfo)
 {
   resetWire();
   m_metaInfo = metaInfo;
+  return *this;
+}
+
+Data&
+Data::setPushed(const bool pushed)
+{
+  resetWire();
+
+  if (pushed)
+  {
+    m_pushed = "true";
+  } else {
+    m_pushed = "false";
+  }
+
   return *this;
 }
 
@@ -298,14 +325,6 @@ Data::setFreshnessPeriod(time::milliseconds freshnessPeriod)
 {
   resetWire();
   m_metaInfo.setFreshnessPeriod(freshnessPeriod);
-  return *this;
-}
-
-Data&
-Data::setPushed(const bool pushed)
-{
-  resetWire();
-  m_metaInfo.setPushed(pushed);
   return *this;
 }
 
